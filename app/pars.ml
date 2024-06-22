@@ -110,7 +110,7 @@ type t = {
   ; reporters: reporter array
   ; display: display
   ; align: int
-  ; resolver: Happy_eyeballs_miou_unix.happy
+  ; resolver: Happy_eyeballs_miou_unix.t
 }
 
 let make ~resolver ~filenames =
@@ -218,11 +218,7 @@ let get_uris_from_stdin () =
   in
   go []
 
-let getaddrinfo dns =
-  {
-    Happy_eyeballs_miou_unix.getaddrinfo=
-      (fun record host -> Dns_client_miou_unix.getaddrinfo dns record host)
-  }
+let getaddrinfo _ = failwith "todo"
 
 let sigpipe = 13
 let () = Sys.set_signal sigpipe Sys.Signal_ignore
@@ -248,15 +244,14 @@ let () =
       uris
   in
   Logs.debug (fun m -> m "Got %d uri(s)" (List.length uris));
-  let daemon, resolver = Happy_eyeballs_miou_unix.make () in
+  let daemon, resolver = Happy_eyeballs_miou_unix.create () in
   let nameservers =
     (`Udp, [ `Plaintext (Ipaddr.of_string_exn "8.8.8.8", 53) ])
   in
   let dns = Dns_client_miou_unix.create ~nameservers resolver in
-  Happy_eyeballs_miou_unix.inject_resolver ~getaddrinfo:(getaddrinfo dns)
-    resolver;
+  Happy_eyeballs_miou_unix.inject resolver (getaddrinfo dns);
   let t = make ~resolver ~filenames in
-  let prm = Miou.call_cc (run t uris) in
+  let prm = Miou.async (run t uris) in
   let result = Miou.await prm in
   Happy_eyeballs_miou_unix.kill daemon;
   match result with Ok () -> () | Error exn -> raise exn

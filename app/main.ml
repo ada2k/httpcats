@@ -27,11 +27,20 @@ let () = Logs.set_level ~all:true (Some Logs.Debug)
 let () = Logs_threaded.enable ()
 let () = Mirage_crypto_rng_unix.initialize (module Mirage_crypto_rng.Fortuna)
 
-let getaddrinfo dns =
-  {
-    Happy_eyeballs_miou_unix.getaddrinfo=
-      (fun record host -> Dns_client_miou_unix.getaddrinfo dns record host)
-  }
+let getaddrinfo dns : Happy_eyeballs_miou_unix.getaddrinfo =
+  fun record host ->
+    let open Ipaddr in
+    match record with
+    | `A -> (
+      match Dns_client_miou_unix.getaddrinfo dns A host with
+      | Error _ as e -> e
+      | Ok (_, addr) -> V4.Set.to_seq addr |> Seq.map (fun addr -> V4 addr) |> Set.of_seq |> Result.ok
+    )
+    | `AAAA -> (
+      match Dns_client_miou_unix.getaddrinfo dns Aaaa host with
+      | Error _ as e -> e
+      | Ok (_, addr) -> V6.Set.to_seq addr |> Seq.map (fun addr -> V6 addr) |> Set.of_seq |> Result.ok
+    )
 
 let google = `Plaintext (Ipaddr.of_string_exn "8.8.8.8", 53)
 
@@ -48,12 +57,11 @@ let unicast_censurfridns_dk =
 
 let () =
   Miou_unix.run @@ fun () ->
-  let daemon, resolver = Happy_eyeballs_miou_unix.make () in
+  let daemon, resolver = Happy_eyeballs_miou_unix.create () in
   let dns =
-    Dns_client_miou_unix.create ~nameservers:(`Udp, [ google ]) resolver
+    Dns_client_miou_unix.create ~nameservers:(`Tcp, [ google ]) resolver
   in
-  Happy_eyeballs_miou_unix.inject_resolver ~getaddrinfo:(getaddrinfo dns)
-    resolver;
+  Happy_eyeballs_miou_unix.inject resolver (getaddrinfo dns);
   let f _resp buf str = Buffer.add_string buf str; buf in
   match
     Httpcats.request ~resolver ~f ~uri:Sys.argv.(1) (Buffer.create 0x100)

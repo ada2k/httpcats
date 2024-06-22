@@ -109,7 +109,7 @@ let () =
   let () = Printexc.record_backtrace true in
   Miou_unix.run @@ fun () ->
   let domains = Miou.Domain.available () in
-  let prm = Miou.call_cc @@ fun () -> server addr in
+  let prm = Miou.async @@ fun () -> server addr in
   Miou.parallel server (List.init domains (Fun.const addr))
   |> List.iter (function Ok () -> () | Error exn -> raise exn);
   Miou.await_exn prm
