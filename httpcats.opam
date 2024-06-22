@@ -32,12 +32,12 @@ build: [
 
 synopsis: "A simple HTTP client using http/af, h2, and miou"
 pin-depends: [
-  [ "httpaf.dev" "git+https://github.com/inhabitedtype/httpaf.git#9cefa96f39712d8c8a4957c98970c2ac4a814ae2"]
-  [ "miou.dev" "git+https://github.com/robur-coop/miou.git#ed5087b832797616df073bd8ec9baed2ec4e474c" ]
+  [ "httpaf.dev" "git+https://github.com/ada2k/httpaf.git#19e0866461302ea6f16b997f14e86a446048e978"]
+  [ "miou.dev" "git+https://github.com/robur-coop/miou.git#072de4fb6588d4bc2930d0fdd2e1672101fb58cf" ]
   [ "mirage-crypto.0.11.3" "git+https://github.com/dinosaure/mirage-crypto.git#c0e29117be2d081b50a5f1a789b16c77585324a3" ]
   [ "mirage-crypto-rng.0.11.3" "git+https://github.com/dinosaure/mirage-crypto.git#c0e29117be2d081b50a5f1a789b16c77585324a3" ]
   [ "alcotest.1.7.0" "git+https://github.com/dinosaure/alcotest.git#d591896a54ff4f652ac2d7d7194de1e0fb6e3aca" ]
   [ "tls-miou-unix.0.17.4" "git+https://github.com/dinosaure/ocaml-tls.git#6b635d130b83bb45007e374d828f877332ab2b2e" ]
-  [ "happy-eyeballs-miou-unix.0.6.0" "git+https://github.com/dinosaure/happy-eyeballs.git#4ff9ff889500b764adcefaf719852298c8d51a40" ]
-  [ "dns-client-miou-unix.7.0.3" "git+https://github.com/dinosaure/ocaml-dns.git#88289449b56846ec3a55de1a75f56c2cf78a3bcb" ]
+  [ "happy-eyeballs-miou-unix.1.1.0" "git+https://github.com/dinosaure/happy-eyeballs.git#6ee6ef1bf18993b31af99d31ba95f1dc68d96675" ]
+  [ "dns-client-miou-unix.8.0.0" "git+https://github.com/ada2k/ocaml-dns.git#e2ff78ee38351d800e52882fbde0596e6f7f961c" ]
 ]
