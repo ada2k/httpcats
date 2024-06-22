@@ -255,9 +255,9 @@ let connect_system ?port ?tls_config host =
         if Unix.is_inet6_addr h_addr_list.(0) then Miou_unix.tcpv6 ()
         else Miou_unix.tcpv4 ()
       in
-      let timeout = Miou.call_cc @@ fun () -> Miou_unix.sleep 5.0; `Timeout in
+      let timeout = Miou.async @@ fun () -> Miou_unix.sleep 5.0; `Timeout in
       let connect =
-        Miou.call_cc @@ fun () ->
+        Miou.async @@ fun () ->
         Miou_unix.connect socket addr;
         `Connected
       in
@@ -287,7 +287,7 @@ let connect_happy_eyeballs ?port ?tls_config ~happy_eyeballs host =
   in
   Log.debug (fun m -> m "try to connect to %s (with happy-eyeballs)" host);
   match
-    ( Happy_eyeballs_miou_unix.connect_endpoint happy_eyeballs host [ port ]
+    ( Happy_eyeballs_miou_unix.connect happy_eyeballs host [ port ]
     , tls_config )
   with
   | Ok ((_ipaddr, _port), file_descr), None -> Ok (`Tcp file_descr)

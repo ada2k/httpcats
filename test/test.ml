@@ -104,7 +104,7 @@ let secure_server ~seed ?(port = 8080) handler =
     Rresult.R.failwith_error_msg (Ca.make "http.cats" seed)
   in
   let prm =
-    Miou.call_cc @@ fun () ->
+    Miou.async @@ fun () ->
     let sockaddr = Unix.ADDR_INET (Unix.inet_addr_loopback, port) in
     let cfg =
       Tls.Config.server
@@ -132,7 +132,7 @@ let test00 =
     Reqd.respond_with_string reqd resp body
   in
   let stop, prm = server ~port:4000 handler in
-  let daemon, resolver = Happy_eyeballs_miou_unix.make () in
+  let daemon, resolver = Happy_eyeballs_miou_unix.create () in
   match
     Httpcats.request ~resolver
       ~f:(fun _resp buf str -> Buffer.add_string buf str; buf)
@@ -186,7 +186,7 @@ let test01 =
     go max
   in
   let stop, prm = server ~port:4000 handler in
-  let daemon, resolver = Happy_eyeballs_miou_unix.make () in
+  let daemon, resolver = Happy_eyeballs_miou_unix.create () in
   match
     Httpcats.request ~resolver
       ~f:(fun _resp buf str -> Buffer.add_string buf str; buf)
@@ -257,7 +257,7 @@ let test02 =
     fold_http_1_1 ~finally ~f Digestif.SHA1.empty (Reqd.request_body reqd)
   in
   let stop, prm = server ~port:4000 handler in
-  let daemon, resolver = Happy_eyeballs_miou_unix.make () in
+  let daemon, resolver = Happy_eyeballs_miou_unix.create () in
   let body = random_string ~len:0x4000 in
   match
     Httpcats.request ~resolver ~meth:`POST ~body
@@ -311,9 +311,9 @@ let test03 =
         Reqd.respond_with_string reqd resp body
   in
   let stop, prm, authenticator = secure_server ~seed ~port:4000 handler in
-  let daemon, resolver = Happy_eyeballs_miou_unix.make () in
+  let daemon, resolver = Happy_eyeballs_miou_unix.create () in
   let http_1_1 =
-    Miou.call_cc @@ fun () ->
+    Miou.async @@ fun () ->
     let tls_config =
       Tls.Config.client ~authenticator ~alpn_protocols:[ "http/1.1" ] ()
     in
@@ -323,7 +323,7 @@ let test03 =
     |> R.reword_error (R.msgf "%a" Httpcats.pp_error)
   in
   let h2 =
-    Miou.call_cc @@ fun () ->
+    Miou.async @@ fun () ->
     Httpcats.request ~resolver ~authenticator
       ~f:(fun _resp buf str -> Buffer.add_string buf str; buf)
       ~uri:"https://127.0.0.1:4000" (Buffer.create 0x10)
@@ -401,9 +401,9 @@ let test04 =
         go max
   in
   let stop, prm, authenticator = secure_server ~seed ~port:4000 handler in
-  let daemon, resolver = Happy_eyeballs_miou_unix.make () in
+  let daemon, resolver = Happy_eyeballs_miou_unix.create () in
   let http_1_1 =
-    Miou.call_cc @@ fun () ->
+    Miou.async @@ fun () ->
     let tls_config =
       Tls.Config.client ~authenticator ~alpn_protocols:[ "http/1.1" ] ()
     in
@@ -413,7 +413,7 @@ let test04 =
     |> R.reword_error (R.msgf "%a" Httpcats.pp_error)
   in
   let h2 =
-    Miou.call_cc @@ fun () ->
+    Miou.async @@ fun () ->
     Httpcats.request ~resolver ~authenticator
       ~f:(fun _resp buf str -> Buffer.add_string buf str; buf)
       ~uri:"https://127.0.0.1:4000" (Buffer.create 0x10)
@@ -481,10 +481,10 @@ let test05 =
         fold_http_1_1 ~finally ~f Digestif.SHA1.empty (Reqd.request_body reqd)
   in
   let stop, prm, authenticator = secure_server ~seed ~port:4000 handler in
-  let daemon, resolver = Happy_eyeballs_miou_unix.make () in
+  let daemon, resolver = Happy_eyeballs_miou_unix.create () in
   let body = random_string ~len:0x4000 in
   let http_1_1 =
-    Miou.call_cc @@ fun () ->
+    Miou.async @@ fun () ->
     let tls_config =
       Tls.Config.client ~authenticator ~alpn_protocols:[ "http/1.1" ] ()
     in
@@ -494,7 +494,7 @@ let test05 =
     |> R.reword_error (R.msgf "%a" Httpcats.pp_error)
   in
   let h2 =
-    Miou.call_cc @@ fun () ->
+    Miou.async @@ fun () ->
     Httpcats.request ~resolver ~authenticator ~meth:`POST ~body
       ~f:(fun _resp buf str -> Buffer.add_string buf str; buf)
       ~uri:"https://127.0.0.1:4000" (Buffer.create 0x1000)

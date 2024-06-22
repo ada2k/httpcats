@@ -5,3 +5,4 @@ _build
 *.tar.gz
 *.merlin
 *.install
+_opam
