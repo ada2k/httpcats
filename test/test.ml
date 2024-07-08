@@ -122,7 +122,7 @@ let test00 =
     let open Httpaf in
     let body = "Hello World!" in
     let headers =
-      Headers.of_list
+      Httpun_types.Headers.of_list
         [
           ("content-type", "text/plain")
         ; ("content-length", string_of_int (String.length body))
@@ -168,7 +168,7 @@ let test01 =
     Logs.debug (fun m -> m "Got a request");
     let open Httpaf in
     let headers =
-      Headers.of_list
+      Httpun_types.Headers.of_list
         [
           ("content-type", "text/plain"); ("content-length", string_of_int max)
         ]
@@ -245,7 +245,7 @@ let test02 =
     let finally ctx =
       let hash = Digestif.SHA1.(to_hex (get ctx)) in
       let headers =
-        Headers.of_list
+        Httpun_types.Headers.of_list
           [
             ("content-type", "text/plain")
           ; ("content-length", string_of_int (String.length hash))
@@ -301,7 +301,7 @@ let test03 =
         let open Httpaf in
         let body = "Hello World!" in
         let headers =
-          Headers.of_list
+          Httpun_types.Headers.of_list
             [
               ("content-type", "text/plain")
             ; ("content-length", string_of_int (String.length body))
@@ -382,7 +382,7 @@ let test04 =
         Logs.debug (fun m -> m "Got a request");
         let open Httpaf in
         let headers =
-          Headers.of_list
+          Httpun_types.Headers.of_list
             [
               ("content-type", "text/plain")
             ; ("content-length", string_of_int max)
@@ -469,7 +469,7 @@ let test05 =
         let finally ctx =
           let hash = Digestif.SHA1.(to_hex (get ctx)) in
           let headers =
-            Headers.of_list
+            Httpun_types.Headers.of_list
               [
                 ("content-type", "text/plain")
               ; ("content-length", string_of_int (String.length hash))

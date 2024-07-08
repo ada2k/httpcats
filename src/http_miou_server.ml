@@ -48,7 +48,7 @@ type error_handler = ?request:request -> error -> (Headers.t -> body) -> unit
 type handler = reqd -> unit
 
 let request_from_httpaf ~scheme { Httpaf.Request.meth; target; headers; _ } =
-  let headers = Headers.of_list (Httpaf.Headers.to_list headers) in
+  let headers = Headers.of_list (Httpun_types.Headers.to_list headers) in
   { meth; target; scheme; headers }
 
 let request_from_h2 { H2.Request.meth; target; scheme; headers } =
@@ -67,7 +67,7 @@ let http_1_1_server_connection ?(config = Httpaf.Config.default)
     in
     Runtime.flat_tasks @@ fun orphans ->
     let respond hdrs =
-      let hdrs = Httpaf.Headers.of_list (Headers.to_list hdrs) in
+      let hdrs = Httpun_types.Headers.of_list (Headers.to_list hdrs) in
       let body = respond hdrs in
       `V1 body
     in
@@ -93,7 +93,7 @@ let https_1_1_server_connection ?(config = Httpaf.Config.default)
     in
     Runtime.flat_tasks @@ fun orphans ->
     let respond hdrs =
-      let hdrs = Httpaf.Headers.of_list (Headers.to_list hdrs) in
+      let hdrs = Httpun_types.Headers.of_list (Headers.to_list hdrs) in
       let body = respond hdrs in
       `V1 body
     in

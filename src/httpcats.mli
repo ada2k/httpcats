@@ -11,7 +11,7 @@ type error
 
 val pp_error : error Fmt.t
 
-module Version = Httpaf.Version
+module Version = Httpun_types.Version
 (** Protocol Version
 
     Consists of [major.minor], in H2 this is [2.0]. *)
@@ -41,7 +41,7 @@ val request :
      ?config:[ `HTTP_1_1 of Httpaf.Config.t | `H2 of H2.Config.t ]
   -> ?tls_config:Tls.Config.client
   -> ?authenticator:X509.Authenticator.t
-  -> ?meth:Httpaf.Method.t
+  -> ?meth:Httpun_types.Method.t
   -> ?headers:(string * string) list
   -> ?body:string
   -> ?max_redirect:int

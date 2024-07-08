@@ -86,7 +86,7 @@ let handler reqd =
   match request.Request.target with
   | "" | "/" | "/index.html" ->
       let headers =
-        Headers.of_list
+        Httpun_types.Headers.of_list
           [
             ("content-type", "text/html; charset=utf-8")
           ; ("content-length", string_of_int (String.length index_html))
@@ -97,7 +97,7 @@ let handler reqd =
       Body.Reader.close body;
       Reqd.respond_with_string reqd resp index_html
   | _ ->
-      let headers = Headers.of_list [ ("content-length", "0") ] in
+      let headers = Httpun_types.Headers.of_list [ ("content-length", "0") ] in
       let resp = Response.create ~headers `Not_found in
       Reqd.respond_with_string reqd resp ""
 

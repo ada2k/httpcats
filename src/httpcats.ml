@@ -83,8 +83,8 @@ let add_authentication ?(meth = `Basic) ~add headers user_pass =
 let user_agent = "http-client/%%VERSION_NUM%%"
 
 let prep_http_1_1_headers headers host user_pass blen =
-  let headers = Httpaf.Headers.of_list headers in
-  let add = Httpaf.Headers.add_unless_exists in
+  let headers = Httpun_types.Headers.of_list headers in
+  let add = Httpun_types.Headers.add_unless_exists in
   let headers = add headers "user-agent" user_agent in
   let headers = add headers "host" host in
   let headers = add headers "connection" "close" in
@@ -126,7 +126,7 @@ let prep_h2_headers headers (host : string) user_pass blen =
   in
   add_authentication ~add hdr user_pass
 
-module Version = Httpaf.Version
+module Version = Httpun_types.Version
 module Status = H2.Status
 module Headers = H2.Headers
 
@@ -162,7 +162,7 @@ let from_httpaf response =
   ; reason= response.Httpaf.Response.reason
   ; headers=
       H2.Headers.of_list
-        (Httpaf.Headers.to_list response.Httpaf.Response.headers)
+        (Httpun_types.Headers.to_list response.Httpaf.Response.headers)
   }
 
 let from_h2 response =
